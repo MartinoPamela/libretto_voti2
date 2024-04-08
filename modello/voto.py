@@ -2,6 +2,7 @@
 
 import dataclasses
 import operator
+from database.voti_dao import VotiDao
 
 
 @dataclasses.dataclass
@@ -37,6 +38,7 @@ def estrai_campo_esame(v):
 class Libretto:
     def __init__(self):
         self._voti = []
+        self._voti_dao = VotiDao()
 
     def append(self, voto):
         if self.has_voto(voto)==False and self.has_conflitto(voto)==False:
@@ -85,12 +87,12 @@ class Libretto:
         for v in self._voti:
             if v.esame == esame:
                 return v
-        raise ValueError(f"Esame '{esame}' non presente nel libretto")
+        raise ValueError(f"Esame '{esame}' non presente nel modello")
 
 
     def has_voto(self, voto):
         """
-        Ricerca se nel libretto esiste già un esame con lo stesso nome e lo stesso punteggio
+        Ricerca se nel modello esiste già un esame con lo stesso nome e lo stesso punteggio
         :param voto: oggetto Voto da confrontare
         :return: True se esiste, False se non esiste
         """
@@ -101,7 +103,7 @@ class Libretto:
 
     def has_conflitto(self, voto):
         """
-        Ricerca se nel libretto esiste già un esame con lo stesso nome ma punteggio diverso
+        Ricerca se nel modello esiste già un esame con lo stesso nome ma punteggio diverso
         :param voto: oggetto Voto da confrontare
         :return: True se esiste, False se non esiste
         """
@@ -121,7 +123,7 @@ class Libretto:
 
     def crea_migliorato(self):
         """
-        Crea una copia del libretto e "migliora" i voti esso presenti.
+        Crea una copia del modello e "migliora" i voti esso presenti.
         :return:
         """
         nuovo = self.copy()
@@ -164,9 +166,12 @@ class Libretto:
     def stampaGUI(self):
         outList = []
         outList.append(f"Hai {len(self._voti)} voti")
-        for v in self._voti:
+        # for v in self._voti:
+        #     outList.append(v)
+        # outList.append(f"La media vale {self.media():.2f}")
+        voti = self._voti_dao.get_voti()
+        for v in voti:
             outList.append(v)
-        outList.append(f"La media vale {self.media():.2f}")
         return outList
 
     def cancella_inferiori(self,punteggio):
@@ -199,12 +204,12 @@ metodo crea_libretto_ordinato_per_nome, ed un metodo crea_libretto_ordinato_per_
 delle copie separate, sulle quali potrò chiamar il metodo stampa()
 
 Opzione 3:
-metodo ordina_per_nome, che modifica il libretto stesso riordinando i Voti, e ordina_per_punteggio, poi userò
+metodo ordina_per_nome, che modifica il modello stesso riordinando i Voti, e ordina_per_punteggio, poi userò
 stampa()
 + aggiungiamo gratis un metodo copy()
 
 Opzione 2bis:
-crea una copia shallow del libretto
+crea una copia shallow del modello
 
 """
 

@@ -2,7 +2,9 @@
 
 import dataclasses
 import operator
-from database.voti_dao import VotiDao
+from database.voti_dao import VotiDao  # così tutti i modelli del libretto che vanno a interagire col dao
+# potenzialmente possiamo descriverli utilizzando il dao, cioè ogni relazione che dobbiamo fare sul database nel dao
+# ci troviamo un metodo che ci permetta di farlo
 
 
 @dataclasses.dataclass
@@ -35,6 +37,7 @@ class Voto:
 def estrai_campo_esame(v):
     return v.esame
 
+
 class Libretto:
     def __init__(self):
         self._voti = []
@@ -43,6 +46,7 @@ class Libretto:
     def append(self, voto):
         if self.has_voto(voto)==False and self.has_conflitto(voto)==False:
             self._voti.append(voto)
+            self._voti_dao.add_voti(voto)
         else:
             raise ValueError("Voto non valido")
 
@@ -166,11 +170,11 @@ class Libretto:
     def stampaGUI(self):
         outList = []
         outList.append(f"Hai {len(self._voti)} voti")
-        # for v in self._voti:
+        # for v in self._voti:  questo ogni voto del suo modello locale lo stampava
         #     outList.append(v)
         # outList.append(f"La media vale {self.media():.2f}")
-        voti = self._voti_dao.get_voti()
-        for v in voti:
+        voti = self._voti_dao.get_voti()  # qua invece lo chiedo al dao,
+        for v in voti:  # non devo stamparlo perché ce l'ho dentro memorizzato
             outList.append(v)
         return outList
 
